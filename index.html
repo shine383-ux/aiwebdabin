@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial="initial-scale=1.0">
+    <title>🍳 냉장고 파먹기 타이쿤 (Pixel Art)</title>
+
+    <style>
+        /* 🔑 단계 1: Galmuri11.ttf 파일 로드 */
+        @font-face {
+            font-family: 'Galmuri11';
+            src: url('Galmuri11.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        /* 1. 픽셀 아트 스타일의 기본 설정 */
+        
+        :root {
+            --pixel-font: 'Galmuri11', sans-serif; /* 🔑 폰트 이름 변경 */
+            --main-color: #4CAF50; 
+            --sub-color: #FFC107;
+            --border-color: #333333;
+            --box-shadow-color: #1a1a1a;
+            --padding-unit: 8px;
+        }
+
+        body {
+            /* 🔑 폰트 적용 */
+            font-family: var(--pixel-font);
+            color: var(--border-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            /* 픽셀 폰트의 깨끗한 렌더링을 위해 다시 적용 */
+            image-rendering: pixelated; 
+            font-size: 0.8em; /* 픽셀 폰트에 맞춰 크기 조정 */
+
+            /* ✨ 배경 이미지 적용 ✨ */
+            background-image: url('pixel_kitchen_background_wide_v2.png'); /* ⬅️ 이미지 파일 이름 */
+            background-size: cover; /* 화면을 꽉 채우도록 */
+            background-position: center; /* 이미지를 중앙에 배치 */
+            background-repeat: no-repeat; /* 이미지 반복 방지 */
+            background-color: #555; /* 이미지가 로드되기 전 배경색 */
+        }
+
+        h1 {
+            color: var(--main-color);
+            font-size: 1.5em; /* 픽셀 폰트에 맞춰 크기 조정 */
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0px var(--box-shadow-color);
+        }
+
+        /* 2. 입력 폼 및 버튼 스타일 */
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: var(--padding-unit);
+            font-size: 1em;
+        }
+
+        input[type="text"], textarea {
+            width: calc(100% - 16px);
+            padding: var(--padding-unit);
+            border: 2px solid var(--border-color);
+            background-color: #fff;
+            box-shadow: 2px 2px 0px var(--box-shadow-color);
+            font-family: var(--pixel-font);
+            font-size: 1em; /* 픽셀 폰트에 맞춰 크기 조정 */
+            resize: none;
+        }
+
+        textarea {
+            height: 100px;
+        }
+
+        .btn-pixel {
+            background-color: var(--sub-color);
+            color: var(--border-color);
+            border: 4px solid var(--border-color);
+            padding: 10px 20px;
+            font-family: var(--pixel-font);
+            font-size: 1.2em; /* 픽셀 폰트에 맞춰 크기 조정 */
+            cursor: pointer;
+            box-shadow: 4px 4px 0px var(--box-shadow-color);
+            transition: all 0.1s;
+        }
+
+        .btn-pixel:hover {
+            background-color: #ffe70f;
+        }
+
+        .btn-pixel:active {
+            box-shadow: 0 0 0 var(--box-shadow-color);
+            transform: translate(4px, 4px);
+        }
+
+        /* 3. 결과 영역 스타일 */
+        .result-area {
+            margin-top: 30px;
+            padding: 15px;
+            border: 2px dashed var(--main-color);
+            background-color: #E8F5E9;
+            min-height: 150px;
+            text-align: left;
+            font-family: var(--pixel-font);
+            font-size: 1.1em; /* 픽셀 폰트에 맞춰 크기 조정 */
+            line-height: 1.6;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            max-height: 500px;
+        }
+
+        .result-area h2 {
+            font-size: 1.3em;
+            color: var(--main-color);
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        /* 로딩 스피너 (픽셀 아트 느낌) */
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5em;
+            animation: blinker 1s step-start infinite;
+            color: var(--main-color);
+        }
+
+        @keyframes blinker {
+            50% { opacity: 0; }
+        }
+
+        /* ✨ 게임 컨테이너 배경 반투명 설정 ✨ */
+        .game-container {
+            width: 100%;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.85); /* ⬅️ 반투명 흰색 배경 */
+            padding: 20px;
+            border: 4px solid var(--border-color);
+            box-shadow: 8px 8px 0px var(--box-shadow-color);
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <h1>✨ 냉장고파먹기🍽️✨</h1>
+        
+        <div class="input-form">
+            <div class="input-group">
+                <label for="ingredients">🌱 사용자의 재료 (예: 양파, 감자, 소고기 조금):</label>
+                <input type="text" id="ingredients" placeholder="재료들을 쉼표(,)로 구분하여 입력하세요." required>
+            </div>
+            
+            <div class="input-group">
+                <label for="flavor_preference">😋 원하는 요리의 맛 또는 종류 (예: 얼큰한 국물 요리, 간단한 볶음, 달콤한 디저트):</label>
+                <textarea id="flavor_preference" placeholder="어떤 요리를 먹고 싶은지 간단히 설명해주세요." required></textarea>
+            </div>
+            
+            <button class="btn-pixel" onclick="register()">레시피 검색</button>
+        </div>
+
+        <div id="loading-spinner" class="loading-spinner">
+            요리 레시피를 생각 중...
+        </div>
+
+        <div class="result-area" id="recipe-result">
+            <h2>📃 레시피 결과창</h2>
+            여기에 LLM이 추천한 요리 이름과 상세 레시피가 차근차근 표시됩니다.
+        </div>
+    </div>
+
+    <script>
+        // API 서버의 주소를 담는 상수 정의 
+        const SERVER_URL = ""; 
+
+        /**
+         * '레시피 검색' 버튼 클릭 시 실행되는 함수
+         * 입력 데이터를 수집하여 서버로 전송합니다.
+         */
+        async function register() {
+            const ingredients = document.getElementById('ingredients').value.trim();
+            const flavorPreference = document.getElementById('flavor_preference').value.trim();
+            const resultArea = document.getElementById('recipe-result');
+            const loadingSpinner = document.getElementById('loading-spinner');
+
+            if (!ingredients || !flavorPreference) {
+                alert("재료와 원하는 맛/종류를 모두 입력해주세요!");
+                return;
+            }
+
+            // 1. 로딩 상태 표시
+            loadingSpinner.style.display = 'block';
+            resultArea.innerHTML = `<h2>요리사 AI가 레시피를 구상 중입니다...</h2>`;
+            
+            // 2. 서버에 전송할 데이터 (JSON) 구성
+            const requestData = {
+                user_ingredients: ingredients,
+                flavor_preference: flavorPreference
+            };
+
+            console.log("서버로 전송할 데이터:", requestData);
+
+            // 3. fetch 함수를 이용한 API 통신 (POST 방식)
+            try {
+                // **주의:** 현재 SERVER_URL이 비어 있으므로, 이 부분은 실행되지 않고 바로 catch 블록으로 이동합니다.
+                const response = await fetch(SERVER_URL, {
+                    method: 'POST', // 통신 방식: POST
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData) 
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP 오류! 상태 코드: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                // 4. 성공 시 결과 영역 업데이트
+                displayRecipe(data);
+
+            } catch (error) {
+                console.error("API 통신 오류 발생:", error);
+                
+                // 5. 오류 또는 현재 mock 데이터로 결과 영역 업데이트
+                const mockRecipe = {
+                    dish_name: "✨ 양감 소시지 짜글이 (Mock Recipe) ✨",
+                    ingredients_needed: "양파, 감자, 소고기 외: 고추장 2T, 다진 마늘 1T, 물 300ml, 대파 1/2대",
+                    steps: [
+                        "1. 양파와 감자를 먹기 좋은 크기로 썰고, 소고기는 해동해 주세요.",
+                        "2. 냄비에 물과 고추장, 다진 마늘을 넣고 끓입니다. (얼큰한 국물 맛!)",
+                        "3. 물이 끓으면 감자를 먼저 넣고 5분간 끓여주세요.",
+                        "4. 양파와 소고기를 넣고 고기가 익을 때까지 중불에서 끓입니다.",
+                        "5. 마지막에 대파를 넣고 한소끔 더 끓여주면, 따끈한 짜글이 완성!"
+                    ].join('\n'),
+                    ai_comment: "남은 재료로 든든한 한 끼를 해결할 수 있는, 한국인의 소울푸드 짜글이를 추천했어요!"
+                };
+
+                displayRecipe(mockRecipe);
+
+            } finally {
+                // 6. 로딩 상태 해제
+                loadingSpinner.style.display = 'none';
+            }
+        }
+
+        /**
+         * 레시피 객체를 받아 결과 영역에 표시하는 함수
+         */
+        function displayRecipe(recipe) {
+            const resultArea = document.getElementById('recipe-result');
+
+            resultArea.innerHTML = `
+                <h2>⭐ ${recipe.dish_name} ⭐</h2>
+                
+                <p><strong>💡 AI의 코멘트:</strong> ${recipe.ai_comment || '맛있게 드세요!'}</p>
+
+                <br>
+                <strong>[필요한 추가 재료]</strong>
+                <p>${recipe.ingredients_needed}</p>
+                
+                <br>
+                <strong>[요리 과정 (STEP BY STEP)]</strong>
+                <p>${recipe.steps}</p>
+                <br>
+                <p style="text-align: center; color: var(--sub-color);">✨ Bon Appétit! ✨</p>
+            `;
+        }
+    </script>
+</body>
+</html>
